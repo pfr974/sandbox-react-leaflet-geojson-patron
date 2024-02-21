@@ -1,26 +1,12 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import './App.css';
 import 'leaflet/dist/leaflet.css';
+import venuesData from './data/venues.json';
 import { Icon, divIcon, point } from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 
 function App() {
-
-  /* mock api */
-  const markers = [
-    {
-      geocode: [-37.807949903804946, 144.9826483446679],
-      popUp: "The best BLT in Melbourne!"
-    },
-    {
-      geocode: [-37.773253242429476, 144.99840194942638],
-      popUp: "A nice cafe!"  
-    },
-    {
-      geocode: [-37.81290917503691, 144.97173774884112],
-      popUp: "Authentic Malaysian Breakfast!"  
-    },
-  ];
+  console.log(venuesData);
 
   const customIcon = new Icon({
     iconUrl: "marker.png",
@@ -46,15 +32,18 @@ function App() {
         chunkedLoading
         iconCreateFunction={createCustomClusterIcon}
       >
-        {markers.map(marker => (
-          <Marker
-            key={marker.geocode.join(',')} 
-            position={marker.geocode}
-            icon={customIcon}
-          >
-            <Popup>{marker.popUp}</Popup>
-          </Marker>
-        ))}
+        {venuesData
+          .filter(venue => venue.census_year === "2022")
+          .map(venue => (
+            <Marker
+              key={`${venue.census_year}-${venue.property_id}-${venue.trading_name}`}
+              position={[venue.latitude, venue.longitude]}
+              icon={customIcon}
+            >
+              <Popup>{venue.trading_name}</Popup>
+            </Marker>
+          ))}
+
       </MarkerClusterGroup>
     </MapContainer>
   )
